@@ -1,0 +1,18 @@
+{
+  "name": "alireza/router",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Alireza\\Router\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "alireza ketabi",
+      "email": "alirezaketabi.h@gmail.com"
+    }
+  ],
+  "require": {
+    "ext-ctype": "*"
+  }
+}
