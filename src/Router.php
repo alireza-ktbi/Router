@@ -43,6 +43,45 @@ class Router
         $this->SetRoute($path, Method::PUT, $callable);
     }
 
+    public function run(string $URI, string $METHOD): bool
+    {
+        $url_path = parse_url($URI, PHP_URL_PATH);
+        $found = false;
+
+        foreach ($this->routs[$METHOD] as $route) {
+            if ($this->checkForSimpleRoute($route, $url_path)) {
+                $found = true;
+                break;
+            } elseif ($this->checkForNestedRoute($route, $url_path)) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            $this->notFound();
+        }
+
+        return $found;
+    }
+
+    private function checkForSimpleRoute(Route $route, string $url_path): bool
+    {
+        $found = false;
+        if ($url_path === $route->orgPath) {
+            $this->runTheCallable($route->callable);
+            $found = true;
+        }
+        return $found;
+    }
+
+    private function runTheCallable(callable $callable, array $args = null)
+    {
+        if (is_callable(($callable))) {
+            ($callable)($args);
+        }
+    }
+
     private function checkForNestedRoute(Route $route, string $url_path): bool
     {
         $found = false;
@@ -76,23 +115,6 @@ class Router
             }
         }
 
-        return $found;
-    }
-
-    private function runTheCallable(callable $callable, array $args = null)
-    {
-        if (is_callable(($callable))) {
-            ($callable)($args);
-        }
-    }
-
-    private function checkForSimpleRoute(Route $route, string $url_path): bool
-    {
-        $found = false;
-        if ($url_path === $route->orgPath) {
-            $this->runTheCallable($route->callable);
-            $found = true;
-        }
         return $found;
     }
 
