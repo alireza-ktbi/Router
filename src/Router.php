@@ -6,6 +6,12 @@ namespace Alireza\Router;
 class Router
 {
     private array $routs;
+    private string $page_404;
+
+    public function set404(string $page)
+    {
+        $this->page_404 = $page;
+    }
 
     public function get(string $path, callable $callable)
     {
