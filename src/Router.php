@@ -38,6 +38,11 @@ class Router
         $this->SetRoute($path, Method::PATH, $callable);
     }
 
+    public function put(string $path, callable $callable)
+    {
+        $this->SetRoute($path, Method::PUT, $callable);
+    }
+
     private function notFound()
     {
         header("HTTP/1.0 404 NOT FOUND");
