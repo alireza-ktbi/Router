@@ -43,6 +43,16 @@ class Router
         $this->SetRoute($path, Method::PUT, $callable);
     }
 
+    private function checkForSimpleRoute(Route $route, string $url_path): bool
+    {
+        $found = false;
+        if ($url_path === $route->orgPath) {
+            $this->runTheCallable($route->callable);
+            $found = true;
+        }
+        return $found;
+    }
+
     private function runTheCallable(callable $callable, array $args = null)
     {
         if (is_callable(($callable))) {
