@@ -43,13 +43,39 @@ class Router
         $this->SetRoute($path, Method::PUT, $callable);
     }
 
-    private function checkForSimpleRoute(Route $route, string $url_path): bool
+    private function checkForNestedRoute(Route $route, string $url_path): bool
     {
         $found = false;
-        if ($url_path === $route->orgPath) {
-            $this->runTheCallable($route->callable);
+        preg_match('/^' . $route->replacedPath . '$/', $url_path, $matches);
+
+        if (count($matches) >= 1) {
+            preg_match_all('/{(([a-zA-Z0-9]*):?(int|string))}/', $route->orgPath, $args);
+            array_shift($matches);
+            $matches = array_combine($args[2], $matches);
             $found = true;
+
+            foreach ($args[1] as $arg) {
+                $arg = explode(":", $arg);
+                if (count($arg) > 1) {
+                    if ($arg[1] == "int") {
+                        if (ctype_digit($matches[$arg[0]])) {
+                            $matches[$arg[0]] = intval($matches[$arg[0]]);
+                        } else {
+                            $found = false;
+                        }
+                    } elseif ($arg[1] == "string") {
+                        if (!ctype_alpha($matches[$arg[0]])) {
+                            $found = false;
+                        }
+                    }
+                }
+            }
+
+            if ($found) {
+                $this->runTheCallable($route->callable, $matches);
+            }
         }
+
         return $found;
     }
 
@@ -58,6 +84,16 @@ class Router
         if (is_callable(($callable))) {
             ($callable)($args);
         }
+    }
+
+    private function checkForSimpleRoute(Route $route, string $url_path): bool
+    {
+        $found = false;
+        if ($url_path === $route->orgPath) {
+            $this->runTheCallable($route->callable);
+            $found = true;
+        }
+        return $found;
     }
 
     private function notFound()
