@@ -43,6 +43,13 @@ class Router
         $this->SetRoute($path, Method::PUT, $callable);
     }
 
+    private function runTheCallable(callable $callable, array $args = null)
+    {
+        if (is_callable(($callable))) {
+            ($callable)($args);
+        }
+    }
+
     private function notFound()
     {
         header("HTTP/1.0 404 NOT FOUND");
