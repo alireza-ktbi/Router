@@ -37,4 +37,10 @@ class Router
     {
         $this->SetRoute($path, Method::PATH, $callable);
     }
+
+    private function notFound()
+    {
+        header("HTTP/1.0 404 NOT FOUND");
+        if (isset($this->page_404) && !empty($this->page_404)) echo $this->page_404;
+    }
 }
