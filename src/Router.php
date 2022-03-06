@@ -46,6 +46,8 @@ class Router
     public function run(string $URI, string $METHOD): bool
     {
         $url_path = parse_url($URI, PHP_URL_PATH);
+        if(strpos($url_path, ".php"))
+            $url_path = explode(".php", $url_path)[1];
         $found = false;
 
         foreach ($this->routs[$METHOD] as $route) {
