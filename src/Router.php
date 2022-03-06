@@ -87,7 +87,8 @@ class Router
     private function checkForNestedRoute(Route $route, string $url_path): bool
     {
         $found = false;
-        preg_match('/^' . $route->replacedPath . '$/', $url_path, $matches);
+        $replacedPath = preg_replace(['/{[a-zA-Z0-9]*:?(|:int|:string)}/', '/\//'], ['([a-zA-Z0-9]+)', '\/'], $route->orgPath);
+        preg_match('/^' . $replacedPath . '$/', $url_path, $matches);
 
         if (count($matches) >= 1) {
             preg_match_all('/{(([a-zA-Z0-9]*):?(int|string))}/', $route->orgPath, $args);
