@@ -1,29 +1,45 @@
 <?php
 require "../vendor/autoload.php";
 
-use Alireza\Router\Router;
+class TestClass
+{
+    public function test1($args)
+    {
+        var_dump($args);
+        echo "it is a class";
+
+    }
+}
+
+use Alireza\Router\{RouteAction, Router};
 
 $router = new Router();
 
-$router->get("/", function () {
-    echo "Home Page";
-});
 
-$router->get("/users", function () {
-    echo "users page";
-});
+$router->get("/", new RouteAction([new testclass(), "test1"]));
 
-$router->post("/users/add", function () {
-    echo "add a user with post method" ;
-});
+$router->get("/users", new RouteAction(
+        function () {
+            echo "users page";
+        }
+    )
+);
 
-$router->get("/users/{id:int}", function (array $args) {
-    echo "users id: " . $args["id"];
-});
+$router->post("/users/add",
+    new RouteAction(function () {
+        echo "add a user with post method";
+    })
+);
 
-$router->get("/users/{addr:string}", function (array $args) {
-    echo "user addr: " . $args["addr"];
-});
+$router->get("/users/{id:int}", new RouteAction(function (array $args) {
+        echo "users id: " . $args["id"];
+    })
+);
+
+$router->get("/users/{addr:string}", new RouteAction(function (array $args) {
+        echo "user addr: " . $args["addr"];
+    })
+);
 
 $router->set404("oh shit we cant find your page, sory :(");
 
