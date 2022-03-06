@@ -13,32 +13,32 @@ class Router
         $this->page_404 = $page;
     }
 
-    public function get(string $path, callable $callable)
+    public function get(string $path, RouteAction $callable)
     {
         $this->SetRoute($path, Method::GET, $callable);
     }
 
-    private function SetRoute(string $path, string $method, callable $callable)
+    private function SetRoute(string $path, string $method, RouteAction $callable)
     {
         $this->routs[$method][] = new Route($path, $callable);
     }
 
-    public function post(string $path, callable $callable)
+    public function post(string $path, RouteAction $callable)
     {
         $this->SetRoute($path, Method::POST, $callable);
     }
 
-    public function delete(string $path, callable $callable)
+    public function delete(string $path, RouteAction $callable)
     {
         $this->SetRoute($path, Method::DELETE, $callable);
     }
 
-    public function patch(string $path, callable $callable)
+    public function patch(string $path, RouteAction $callable)
     {
         $this->SetRoute($path, Method::PATH, $callable);
     }
 
-    public function put(string $path, callable $callable)
+    public function put(string $path, RouteAction $callable)
     {
         $this->SetRoute($path, Method::PUT, $callable);
     }
@@ -71,17 +71,10 @@ class Router
     {
         $found = false;
         if ($url_path === $route->orgPath) {
-            $this->runTheCallable($route->callable);
+            $route->action->execute();
             $found = true;
         }
         return $found;
-    }
-
-    private function runTheCallable(callable $callable, array $args = null)
-    {
-        if (is_callable(($callable))) {
-            ($callable)($args);
-        }
     }
 
     private function checkForNestedRoute(Route $route, string $url_path): bool
@@ -114,7 +107,7 @@ class Router
             }
 
             if ($found) {
-                $this->runTheCallable($route->callable, $matches);
+                $route->action->execute($matches);
             }
         }
 
