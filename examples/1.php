@@ -16,7 +16,7 @@ use Alireza\Router\{RouteAction, Router};
 $router = new Router();
 
 
-$router->get("/", new RouteAction([new testclass(), "test1"]));
+$router->get("/", new RouteAction([testclass::class, "test1"]));
 
 $router->get("/users", new RouteAction(
         function () {
