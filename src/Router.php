@@ -48,6 +48,7 @@ class Router
         $url_path = parse_url($URI, PHP_URL_PATH);
         if(strpos($url_path, ".php"))
             $url_path = explode(".php", $url_path)[1];
+        if($url_path == "") $url_path = "/";
         $found = false;
 
         foreach ($this->routs[$METHOD] as $route) {
