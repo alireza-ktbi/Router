@@ -6,11 +6,11 @@ namespace Alireza\Router;
 class Router
 {
     private array $routs;
-    private string $page_404;
+    private array $HttpPages;
 
-    public function set404(string $page)
+    public function setHttpCodePage(string $page, int $code = 404)
     {
-        $this->page_404 = $page;
+        $this->HttpPages[$code] = $page;
     }
 
     public function get(string $path, RouteAction $callable)
@@ -46,9 +46,9 @@ class Router
     public function run(string $URI, string $METHOD): bool
     {
         $url_path = parse_url($URI, PHP_URL_PATH);
-        if(strpos($url_path, ".php"))
+        if (strpos($url_path, ".php"))
             $url_path = explode(".php", $url_path)[1];
-        if($url_path == "") $url_path = "/";
+        if ($url_path == "") $url_path = "/";
         $found = false;
 
         foreach ($this->routs[$METHOD] as $route) {
@@ -62,7 +62,7 @@ class Router
         }
 
         if (!$found) {
-            $this->notFound();
+            $this->sendHttpCode();
         }
 
         return $found;
@@ -115,9 +115,10 @@ class Router
         return $found;
     }
 
-    private function notFound()
+    public function sendHttpCode(?int $code = 404)
     {
-        header("HTTP/1.0 404 NOT FOUND");
-        if (isset($this->page_404) && !empty($this->page_404)) echo $this->page_404;
+        $codes = json_decode(file_get_contents(__DIR__ . '/HttpCodes.json'), true);
+        header("HTTP/1.0 $code $codes[$code]");
+        echo $this->HttpPages[$code] ?? null;
     }
 }
