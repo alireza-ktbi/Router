@@ -41,7 +41,7 @@ $router->get("/users/{addr:string}", new RouteAction(function (array $args) {
     })
 );
 
-$router->set404("oh shit we cant find your page, sory :(");
+$router->setHttpCodePage("sorry we can't found your page :(");
 
 $router->run(
     URI: $_SERVER["REQUEST_URI"],
